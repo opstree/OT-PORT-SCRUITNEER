@@ -4,6 +4,7 @@ import (
 	"io/ioutil"
 	"log"
 
+	"github.com/elastic/go-elasticsearch"
 	"gopkg.in/yaml.v2"
 )
 
@@ -34,4 +35,10 @@ func ReadConfig(filename string) (*ConfigFile, error) {
 		log.Fatalf("Not able to unmarshal %q file %v", filename, err)
 	}
 	return config, nil
+}
+
+func EsClient() {
+	cfg := elasticsearch.Config{
+		
+	}
 }
