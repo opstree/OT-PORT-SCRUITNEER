@@ -1,11 +1,11 @@
 package handler
 
 import (
-	"io/ioutil"
-	"log"
-
+	"fmt"
 	"github.com/elastic/go-elasticsearch"
 	"gopkg.in/yaml.v2"
+	"io/ioutil"
+	"log"
 )
 
 // ConfigFile Structure for config
@@ -15,6 +15,12 @@ type ConfigFile struct {
 		Username   string `yaml:"username"`
 		Channel    string `yaml:"channel"`
 	} `yaml:"slack_config"`
+	ESConfig struct {
+		Address  string `yaml:"address"`
+		Port     int    `yaml:"port"`
+		UserName string `yaml:"username"`
+		Password string `yaml:"password"`
+	} `yaml:"es_config"`
 	WhitelistPorts []int `yaml:"whitelist_ports"`
 	Hosts          []struct {
 		Host      string `yaml:"host"`
@@ -37,8 +43,25 @@ func ReadConfig(filename string) (*ConfigFile, error) {
 	return config, nil
 }
 
-func EsClient() {
-	cfg := elasticsearch.Config{
-		
-	}
-}
+// func EsClient(config string) (elasticsearch.Config){
+// 	es_config, _ := ReadConfig(config)
+// 	if es_config.ESConfig.UserName != nil {
+// 		cfg := elasticsearch.Config{
+// 			Addresses: []string{
+// 				fmt.Sprintf("%s:%d", es_config.ESConfig.Address, es_config.ESConfig.Port),
+// 			},
+// 			// Username: fmt.Sprintf("%s", es_config.ESConfig.UserName),
+// 			// Password: fmt.Sprintf("%s", es_config.ESConfig.Password),
+// 		}
+// 	} else {
+// 		cfg := elasticsearch.Config{
+// 			Addresses: []string{
+// 				fmt.Sprintf("%s:%d", es_config.ESConfig.Address, es_config.ESConfig.Port),
+// 			},
+// 		}
+// 	}
+// 	es, err := elasticsearch.NewClient(cfg)
+// 	if err != nil {
+// 		log.Fatalf("Not able to create ES client", err)
+// 	}
+// }

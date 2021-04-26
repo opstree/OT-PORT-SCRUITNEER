@@ -2,6 +2,11 @@ slack_config:
   webhook_url: "https://hooks.slack.com/services/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"
   username: "scanner"
   channel: "test-portscan"
+es_config:
+  address: localhost
+  port: 9200
+  username:
+  password:
 hosts:
   - host: 101.53.157.18
     whitelist: [80, 443, 9101, 9100]

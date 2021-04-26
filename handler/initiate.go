@@ -1,20 +1,31 @@
-package main
+package handler
 
 import (
 	"fmt"
 	"log"
 
-	"github.com/deveshs23/port-scanner/handler"
 	"github.com/deveshs23/port-scanner/notification"
-	"github.com/elastic/go-elasticsearch"
 )
 
-func main() {
+type DataStruct struct {
+	// Hosts []struct {
+	Host  string `json:"host"`
+	Ports []struct {
+		Port       []int  `json:"port"`
+		Severity   string `json:"severity"`
+		Service    string `json:"service"`
+		Tag        string `json:"tag"`
+		Compliance bool   `json:"compliance"`
+	} `json:"ports"`
+	// } `json:"Hosts"`
+}
 
-	config, _ := handler.ReadConfig("config.yaml")
+func getData() []DataStruct {
+	var getDataStruct []DataStruct
+	config, _ := ReadConfig("config.yaml")
 	// fmt.Println(config)
 	for _, host := range config.Hosts {
-		data, err := handler.Scanner(host.Host, host.Whitelist)
+		data, err := Scanner(host.Host, host.Whitelist)
 		if err != nil {
 			log.Fatalf("cehck %v", err)
 		}
@@ -33,18 +44,16 @@ func main() {
 				Color:     "danger",
 				IconEmoji: ":hammer_and_wrench",
 			}
+			getDataStruct = append(getDataStruct, DataStruct{
+				Host:  data.Host,
+				Ports: data.Ports,
+				
+			})
 			err = sc.SendJobNotification(sj)
 			if err != nil {
 				log.Fatal(err)
 			}
 		}
 	}
-	es, err := elasticsearch.NewClient(
-		elasticsearch.Config{
-			Addresses: []string{fmt.Sprintf("%s:%d", config.ESConfig.Address, config.ESConfig.Port)},
-		})
-	
-	if err != nil {
-		log.Fatalf("ERROR: Unable to create client: %s", err)
-	}
+	return getDataStruct
 }
